@@ -1,0 +1,47 @@
+
+
+<div class="container">
+  <h1>Buscar pessoa</h1>
+  <div>
+    <input type="search" 
+      [(ngModel)]="valorBuscaPessoa" 
+      (keyup.enter)="obterPessoaEspecifica()" />
+  </div>
+
+  <p>Pessoa encontrada: {{ (pessoaEncontrada$ | async)?.nome }}</p>
+</div>
+
+<hr>
+
+<div class="container">
+  <h1>Adicionar pessoa</h1>
+  <div>
+    <input type="text" 
+      [(ngModel)]="nomeAdicionar" 
+      (keyup.enter)="adicionarPessoa()" />
+  </div>
+</div>
+
+<hr>
+
+<div class="container">
+  <h1>Lista de pessoas</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Nome</th>
+        <th>Data de Criação</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (pessoa of pessoas$ | async; track pessoas$) {
+        <tr>
+          <td>{{ pessoa.id }}</td>
+          <td>{{ pessoa.nome }}</td>
+          <td>{{ pessoa.dataDeCadastro }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
