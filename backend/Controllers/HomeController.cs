@@ -26,7 +26,11 @@ namespace backend.Controllers
         [Route("pessoas/{nome}")]
         public IActionResult RetornarNome(string nome)
         {
-            var result = Pessoas.Find(x => x.Nome.StartsWith(nome));
+            var result = Pessoas.Find(x => x.Nome.StartsWith(nome, StringComparison.OrdinalIgnoreCase));
+
+            if (string.IsNullOrEmpty(nome) || result == null)
+                return NotFound();
+
             return Ok(result);
         }
 
