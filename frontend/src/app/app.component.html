@@ -1,31 +1,63 @@
-<h1>API de Pessoas</h1>
-
-<div class="container">
-  <h1>Buscar pessoa</h1>
-  <div>
-    <input type="search" 
-      [(ngModel)]="valorBuscaPessoa" 
-      (keyup.enter)="obterPessoaEspecifica()" />
+<div class="navbar bg-primary text-white mb-4">
+  <div class="container">
+    <h1><b>API de Pessoas</b></h1>
   </div>
+</div>
 
-  <p>Pessoa encontrada: {{ (pessoaEncontrada$ | async)?.nome }}</p>
+<div class="container mb-4">
+  <div class="row mb-3">
+    <div class="col card me-2 px-3 py-2">
+      <h3>Buscar pessoa</h3>
+      <div>
+        <input type="search" placeholder="Digite um nome..." class="form-control"
+          [(ngModel)]="valorBuscaPessoa" 
+          (keyup.enter)="obterPessoaEspecifica()" />
+      </div>
+    
+      <p>Pessoa encontrada: {{ (pessoaEncontrada$ | async)?.nome }}</p>
+    </div>
+
+    <div class="col card me-1 md-1 px-3 py-2">
+      <h3>Adicionar pessoa</h3>
+      <div>
+        <input type="search" placeholder="Digite um nome..." class="form-control"
+          [(ngModel)]="nomeAdicionar" 
+          (keyup.enter)="adicionarPessoa()" />
+      </div>
+
+      <p>Pessoa adicionada: </p>
+    </div>
+
+    <div class="col card ms-2 px-3 py-2">
+      <h3>Deletar pessoa</h3>
+      <div>
+        <input type="search" placeholder="Digite um ID..." class="form-control"
+           />
+      </div>
+
+      <p>Pessoa deletada: </p>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col card px-3 py-2">
+      <h3>Atualizar pessoa</h3>
+      <div>
+        <input type="search" placeholder="Digite um ID..." class="form-control mb-2"
+           />
+        <input type="search" placeholder="Digite o novo nome..." class="form-control"
+           />
+      </div>
+    
+      <p>Pessoa atualizada: </p>
+    </div>
+  </div>
 </div>
 
 <hr>
 
 <div class="container">
-  <h1>Adicionar pessoa</h1>
-  <div>
-    <input type="text" 
-      [(ngModel)]="nomeAdicionar" 
-      (keyup.enter)="adicionarPessoa()" />
-  </div>
-</div>
-
-<hr>
-
-<div class="container">
-  <h1>Lista de pessoas</h1>
+  <h2>Lista de pessoas</h2>
   <table class="table">
     <thead>
       <tr>

@@ -1,1 +1,6 @@
+# Ignorar diretórios e arquivos do Visual Studio
 .vs/
+
+# Ignorar dependências do Node.js
+node_modules/
+frontend/node_modules/

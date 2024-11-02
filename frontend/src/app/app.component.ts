@@ -18,7 +18,7 @@ import { FormsModule } from '@angular/forms';
 export class AppComponent implements OnInit {
   title = 'Consumir-Api';
   http = inject(HttpClient);
-  urlApi = 'https://localhost:7212/api/Home';
+  urlApi = 'https://localhost:7026/api/Home';
   pessoas$?: Observable<Pessoa[]>;
 
   pessoaEncontrada$?: Observable<Pessoa>;
