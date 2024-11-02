@@ -26,7 +26,7 @@ namespace backend.Controllers
         [Route("pessoas/{nome}")]
         public IActionResult RetornarNome(string nome)
         {
-            var result = Pessoas.Find(x => x.Nome.StartsWith(nome, StringComparison.OrdinalIgnoreCase));
+            var result = Pessoas.FirstOrDefault(x => x.Nome.StartsWith(nome, StringComparison.OrdinalIgnoreCase));
 
             if (string.IsNullOrEmpty(nome) || result == null)
                 return NotFound();
@@ -47,6 +47,34 @@ namespace backend.Controllers
 
             Pessoas.Add(pessoa);
             return Results.Ok(pessoa);
+        }
+
+        [HttpPut]
+        [Route("pessoas/{id}")]
+        public IActionResult AtualizarNome(Guid id, [FromBody] PessoaDTO pessoaDto)
+        {
+            Pessoa pessoa = Pessoas.FirstOrDefault(x => x.Id == id);
+
+            if (pessoa == null)
+                return NotFound();
+
+            pessoa.Nome = pessoaDto.Nome;
+
+            return Ok(pessoa);
+        }
+
+        [HttpDelete]
+        [Route("pessoa/{id}")]
+        public IActionResult DeletarPessoa(Guid id)
+        {
+            Pessoa pessoa = Pessoas.FirstOrDefault(x => x.Id == id);
+
+            if (pessoa == null)
+                return NotFound();
+
+            Pessoas.Remove(pessoa);
+
+            return Ok(pessoa);
         }
     }
 }
