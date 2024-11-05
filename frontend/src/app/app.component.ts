@@ -2,15 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Pessoa } from './models/pessoa';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule],
+  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -24,12 +25,22 @@ export class AppComponent implements OnInit {
   pessoaEncontrada$?: Observable<Pessoa>;
   valorBuscaPessoa = '';
 
+  pessoaAdicionada$?: Observable<Pessoa>;
   nomeAdicionar = '';
 
+  pessoaDeletada$?: Observable<Pessoa>;
+  idDeletar = '';
+  
+  pessoaAtualizada$?: Observable<Pessoa>;
+  idAtualizar = '';
+  nomeAtualizar = '';
+
+  //Procurar todos
   obterPessoa() {
     this.pessoas$ = this.http.get<Pessoa[]>(`${this.urlApi}/pessoas`)
   }
 
+  //Procurar
   obterPessoaEspecifica() {
     if(!this.valorBuscaPessoa)
       return;
@@ -37,6 +48,7 @@ export class AppComponent implements OnInit {
     this.pessoaEncontrada$ = this.http.get<Pessoa>(`${this.urlApi}/pessoas/${this.valorBuscaPessoa}`)
   }
 
+  //Adicionar
   adicionarPessoa() {
     if(!this.nomeAdicionar)
       return;
@@ -47,11 +59,55 @@ export class AppComponent implements OnInit {
       dataDeCadastro: ""
     }
 
-    this.http.post<void>(`${this.urlApi}/pessoas`, pessoaCriar)
-      .subscribe(_ => {
-        this.obterPessoa()
-        this.nomeAdicionar = ""
-      })
+    this.pessoaAdicionada$ = this.http.post<Pessoa>(`${this.urlApi}/pessoas`, pessoaCriar)
+      .pipe(
+        tap(pessoa => {
+          this.obterPessoa()
+          this.nomeAdicionar = ""
+        }
+      )
+    )
+  }
+
+  //Deletar
+  deletarPessoa() {
+      if(!this.idDeletar)
+    return;
+    
+    this.pessoaDeletada$ = this.http.delete<Pessoa>(`${this.urlApi}/pessoas/${this.idDeletar}`)
+      .pipe(
+        tap(pessoa => {
+          this.obterPessoa()
+          this.idDeletar = ""
+        }
+      )
+    )
+  }
+
+  //Atualizar
+  meuForm = new FormGroup({
+    id: new FormControl(''),
+    nome: new FormControl(''),
+  })
+
+  atualizarPessoa() {
+    const nome = this.meuForm.value.nome ?? '';
+
+    const pessoaAtualizar: Pessoa = {
+      id: "",
+      nome: nome,
+      dataDeCadastro: ''
+    };
+
+    this.pessoaAtualizada$ = this.http.put<Pessoa>(`${this.urlApi}/pessoas/${this.meuForm.value.id}`, 
+      pessoaAtualizar)
+      .pipe(
+        tap(pessoa => {
+          this.obterPessoa()
+          this.meuForm.reset();
+        })
+      )
+    
   }
 
   ngOnInit(): void {

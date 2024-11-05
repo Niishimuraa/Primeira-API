@@ -25,17 +25,18 @@
           (keyup.enter)="adicionarPessoa()" />
       </div>
 
-      <p>Pessoa adicionada: </p>
+      <p>Pessoa adicionada: {{ (pessoaAdicionada$ | async)?.nome }}</p>
     </div>
 
     <div class="col card ms-2 px-3 py-2">
       <h3>Deletar pessoa</h3>
       <div>
         <input type="search" placeholder="Digite um ID..." class="form-control"
-           />
+          [(ngModel)]="idDeletar" 
+          (keyup.enter)="deletarPessoa()" />
       </div>
 
-      <p>Pessoa deletada: </p>
+      <p>Pessoa deletada: {{ (pessoaDeletada$ | async)?.nome }}</p>
     </div>
   </div>
   
@@ -43,13 +44,15 @@
     <div class="col card px-3 py-2">
       <h3>Atualizar pessoa</h3>
       <div>
-        <input type="search" placeholder="Digite um ID..." class="form-control mb-2"
-           />
-        <input type="search" placeholder="Digite o novo nome..." class="form-control"
-           />
+        <form [formGroup]="meuForm" (keyup.enter)="atualizarPessoa()" >
+          <input type="search" placeholder="Digite um ID..." class="form-control mb-2"
+            formControlName="id" />
+          <input type="search" placeholder="Digite o novo nome..." class="form-control"
+            formControlName="nome" />
+        </form>
       </div>
     
-      <p>Pessoa atualizada: </p>
+      <p>Pessoa atualizada: {{ (pessoaAtualizada$ | async)?.nome }}</p>
     </div>
   </div>
 </div>

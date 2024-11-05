@@ -64,7 +64,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete]
-        [Route("pessoa/{id}")]
+        [Route("pessoas/{id}")]
         public IActionResult DeletarPessoa(Guid id)
         {
             Pessoa pessoa = Pessoas.FirstOrDefault(x => x.Id == id);
