@@ -1,6 +1,8 @@
-﻿using backend.DTO;
+﻿using backend.Context;
+using backend.DTO;
 using backend.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -8,25 +10,34 @@ namespace backend.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
-        public static List<Pessoa> Pessoas = new List<Pessoa>()
+        private readonly AppDbContext _context;
+
+        public HomeController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+
+        /*public static List<Pessoa> Pessoas = new List<Pessoa>()
         {
             new Pessoa(Guid.NewGuid(), "Henrique", DateTime.Now),
             new Pessoa(Guid.NewGuid(), "Julia", DateTime.Now),
             new Pessoa(Guid.NewGuid(), "Johnson", DateTime.Now)
-        };
+        };*/
 
         [HttpGet]
         [Route("pessoas")]
-        public IActionResult RetornarPessoa()
+        public async Task<IActionResult> RetornarPessoa()
         {
-            return Ok(Pessoas);
+            var pessoas = await _context.Pessoas.ToListAsync();
+            return Ok(pessoas);
         }
-
+        
         [HttpGet]
         [Route("pessoas/{nome}")]
         public IActionResult RetornarNome(string nome)
         {
-            var result = Pessoas.FirstOrDefault(x => x.Nome.StartsWith(nome, StringComparison.OrdinalIgnoreCase));
+            var result = _context.Pessoas.FirstOrDefault(x => x.Nome.StartsWith(nome));
 
             if (string.IsNullOrEmpty(nome) || result == null)
                 return NotFound();
@@ -36,7 +47,7 @@ namespace backend.Controllers
 
         [HttpPost]
         [Route("pessoas")]
-        public IResult AdicionarPessoa([FromBody] PessoaDTO pessoaDto)
+        public async Task<IActionResult> AdicionarPessoa([FromBody] PessoaDTO pessoaDto)
         {
             Pessoa pessoa = new Pessoa
             (
@@ -45,34 +56,40 @@ namespace backend.Controllers
                 DateTime.Now
             );
 
-            Pessoas.Add(pessoa);
-            return Results.Ok(pessoa);
-        }
+            await _context.AddAsync(pessoa);
+            await _context.SaveChangesAsync();
 
+            return Ok(pessoa);
+        }
+        
         [HttpPut]
         [Route("pessoas/{id}")]
-        public IActionResult AtualizarNome(Guid id, [FromBody] PessoaDTO pessoaDto)
+        public async Task<IActionResult> AtualizarNome(Guid id, [FromBody] PessoaDTO pessoaDto)
         {
-            Pessoa pessoa = Pessoas.FirstOrDefault(x => x.Id == id);
+            Pessoa pessoa = await _context.Pessoas.FirstOrDefaultAsync(x => x.Id == id);
 
             if (pessoa == null)
                 return NotFound();
 
             pessoa.Nome = pessoaDto.Nome;
+            _context.Pessoas.Update(pessoa);
+
+            await _context.SaveChangesAsync();
 
             return Ok(pessoa);
         }
-
+        
         [HttpDelete]
         [Route("pessoas/{id}")]
-        public IActionResult DeletarPessoa(Guid id)
+        public async Task<IActionResult> DeletarPessoa(Guid id)
         {
-            Pessoa pessoa = Pessoas.FirstOrDefault(x => x.Id == id);
+            Pessoa pessoa = await _context.Pessoas.FirstOrDefaultAsync(x => x.Id == id);
 
             if (pessoa == null)
                 return NotFound();
 
-            Pessoas.Remove(pessoa);
+            _context.Pessoas.Remove(pessoa);
+            await _context.SaveChangesAsync();
 
             return Ok(pessoa);
         }
